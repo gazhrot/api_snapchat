@@ -79,11 +79,17 @@ app.post('/option=connexion', function(req, res) {
       if (err) {
         res.send(JSON.stringify({error: 'Email ou Password invalide.', data: []}));
       } else {
-        var data = {
-          id: rows[0].id,
-          email: rows[0].email
-        }
-        res.send(JSON.stringify({error: true, data: JSON.stringify(data), token: tokens}));
+          var data = {
+            id: rows[0].id,
+            email: rows[0].email
+          }
+          var bquery = connection.query('UPDATE user SET token = ? WHERE email = ?', [tokens, req.body.email], function (err, rows) {
+            if (err) {
+              res.send(JSON.stringify({error: 'Email invalide.', data: []}));
+            } else {
+              res.send(JSON.stringify({error: true, data: JSON.stringify(data), token: tokens}));
+            }
+          });
       }
     });
   }
@@ -91,22 +97,30 @@ app.post('/option=connexion', function(req, res) {
 
 app.post('/option=alluser', function(req, res) {
 
-  if (req.body.email && req.body.password) {
-    var aquery = connection.query('SELECT * FROM user WHERE email = ?', req.body.email, function (err, rows) {
+  if (req.body.email && req.body.token) {
+    var aquery = connection.query('SELECT * FROM user WHERE email = ? AND token = ?', [req.body.email, req.body.token], function (err, rows) {
       if (err) {
-        res.send(JSON.stringify({error: 'Email ou Password invalide.', data: []}));
+        res.send(JSON.stringify({error: 'Email ou Token invalide.', data: []}));
       } else {
-        
-        var user = [];
-        
-        for (var i = 0; i < rows.length;i++) {
-          user.push({
-            id: rows[i].id,
-            email: rows[i].email
-          })
+        if (req.body.token == rows[0].token) {
+          var bquery = connection.query('SELECT * FROM user', function (err, rows) {
+            if (err) {
+              res.send(JSON.stringify({error: 'Aucun utilisateur.', data: []}));
+            } else {
+              
+              var user = [];
+              
+              for (var i = 0; i < rows.length;i++) {
+                user.push({
+                  id: rows[i].id,
+                  email: rows[i].email
+                })
+              }
+              console.log(user);
+              res.send(JSON.stringify({error: true, data: JSON.stringify(user), token: ''}));
+            } 
+          });
         }
-        console.log(user);
-        res.send(JSON.stringify({error: true, data: JSON.stringify(user), token: ''}));
       }
     });
   }
@@ -138,7 +152,9 @@ app.post('/option=getsnap', function(req, res) {
 
 app.post('/option=viewsnap', function(req, res) {
 
-  
+  /*if (req.body.email && req.body.token && req.body.id) {
+    var aquery = connection.query('');
+  }*/
 
 });
 
