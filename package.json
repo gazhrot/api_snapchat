@@ -1,0 +1,35 @@
+{
+  "name": "api_snapchat",
+  "version": "0.0.1",
+  "description": "api snapchat",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gazhrot/api_snapchat.git"
+  },
+  "author": "axel bruneaux",
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/gazhrot"
+  },
+  "homepage": "https://github.com/gazhrot/",
+  "dependencies": {
+    "body-parser": "^1.14.1",
+    "express": "^4.13.3",
+    "hat": "^0.0.3",
+    "multer": "^1.1.0",
+    "mysql": "^2.9.0",
+    "nodemailer": "^2.3.2",
+    "password-hash": "^1.2.2",
+    "querystring": "^0.2.0",
+    "socket.io": "^1.3.7"
+  },
+  "devDependencies": {},
+  "keywords": [
+    "snapchat"
+  ]
+}
