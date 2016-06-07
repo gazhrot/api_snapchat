@@ -1,6 +1,10 @@
-var express =   require("express");
-var multer  =   require('multer');
-var app         =   express();
+var express    = require("express");
+var multer     = require('multer');
+var app        = express();
+var path       = require('path');
+var qs         = require('querystring');
+var formidable = require("formidable");
+var util       = require('util');
 var bodyParser = require('body-parser');
 var mysql      = require('mysql');
 var connection = mysql.createConnection({
@@ -32,7 +36,7 @@ var storage =   multer.diskStorage({
     callback(null, './uploads');
   },
   filename: function (req, file, callback) {
-    callback(null, file.fieldname + '-' + Date.now());
+    callback(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
   }
 });
 
@@ -44,7 +48,7 @@ var token = function() {
     return rand() + rand(); // to make it longer
 };
 
-var upload = multer({ storage : storage}).single('userPhoto');
+var upload = multer({ storage : storage}).single('snap');
 
 app.post('/option=inscription', function(req, res) {
 
@@ -118,7 +122,7 @@ app.post('/option=alluser', function(req, res) {
               }
               console.log(user);
               res.send(JSON.stringify({error: true, data: JSON.stringify(user), token: ''}));
-            } 
+            }
           });
         }
       }
@@ -126,16 +130,29 @@ app.post('/option=alluser', function(req, res) {
   }
 });
 
-app.post('/option=sendsnap', function(req, res) {
+app.get('/uploads/:snap', function(req, res) {
+  res.sendFile(__dirname + '/uploads/' + req.params.snap);
+});
 
-  var reponse = {
-    error: 'test',
-    data: req.body.data,
-    token: req.body.token
-  }
+app.post('/option=sendsnap', function(req, res, next) {
 
-  res.send(JSON.stringify(reponse));
-
+  upload(req,res,function(err) {
+    if(err) {
+      res.send(JSON.stringify({error: 'Impossible d\'upload la photo', data: []}));
+    }
+    
+    var snapurl = 'http://localhost:3000/uploads/'+req.file.filename;
+    
+    if (req.body.email && req.body.token && req.body.temps && req.body.u2) {
+      var aquery = connection.query('INSERT INTO snapchat (email_sender, id_receiver, url, duration, view) VALUES (?, ?, ?, ?, ?)', [req.body.email, req.body.u2, snapurl, req.body.temps, 0], function(err, rows) {
+        if (err) {
+          res.send(JSON.stringify({error: 'Il y a une erreur quelque part mdr.', data: []}));
+        } else {
+          res.send(JSON.stringify({error: true, data: 'Snap bien envoyer', token: ''}));
+        }
+      });
+    }
+  });
 });
 
 app.post('/option=getsnap', function(req, res) {
@@ -156,21 +173,6 @@ app.post('/option=viewsnap', function(req, res) {
     var aquery = connection.query('');
   }*/
 
-});
-
-/*app.get('/',function(req,res) {
-      res.sendFile(__dirname + "/index.html");
-});*/
-
-app.post('/api/photo',function(req,res){
-  console.log(req.file);
-
-    upload(req,res,function(err) {
-        if(err) {
-            return res.end("Error uploading file.");
-        }
-        res.end("File is uploaded and email as send");
-    });
 });
 
 app.listen(3000,function(){
