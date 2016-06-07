@@ -1,7 +1,7 @@
 {
-  "name": "api_snapchat",
+  "name": "photo",
   "version": "0.0.1",
-  "description": "api snapchat",
+  "description": "photo app",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gazhrot/api_snapchat.git"
+    "url": "git+https://github.com/gazhrot/Hackaton42.git"
   },
   "author": "axel bruneaux",
   "license": "BSD-2-Clause",
@@ -20,6 +20,7 @@
   "dependencies": {
     "body-parser": "^1.14.1",
     "express": "^4.13.3",
+    "formidable": "^1.0.17",
     "hat": "^0.0.3",
     "multer": "^1.1.0",
     "mysql": "^2.9.0",
@@ -30,6 +31,6 @@
   },
   "devDependencies": {},
   "keywords": [
-    "snapchat"
+    "photo"
   ]
 }
